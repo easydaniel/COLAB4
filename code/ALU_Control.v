@@ -28,6 +28,24 @@ reg        [4-1:0] ALUCtrl_o;
 //Select exact operation
 always @ (*) begin
   case (ALUOp_i)
+    6'b000000: begin // R TYPE
+        case (funct_i) begin
+            6'b100000: ALUCtrl_o = 4'b0010; // ADD
+            6'b100010: ALUCtrl_o = 4'b0110; // SUB
+            6'b100100: ALUCtrl_o = 4'b0000; // AND
+            6'b100101: ALUCtrl_o = 4'b0001; // OR
+            6'b101010: ALUCtrl_o = 4'b0111; // SLT
+            6'b000011: ALUCtrl_o = 4'b1000; // SRA
+            6'b000111: ALUCtrl_o = 4'b1001; // SRAV
+            6'b011000: ALUCtrl_o = 4'b1011; // MUL
+            default:   ALUCtrl_o = 4'bxxxx;
+        end
+    end
+    6'b000001: ALUCtrl_o = 4'b0010; // ADDI
+    6'b000010: ALUCtrl_o = 4'b0111; // SLTIU
+    6'b000011: ALUCtrl_o = 4'b0001; // ORI
+    6'b000100: ALUCtrl_o = 4'b0010; // LW
+    6'b000101: ALUCtrl_o = 4'b0010; // SW
     default: ALUCtrl_o = 4'bxxxx;
   endcase
 end
