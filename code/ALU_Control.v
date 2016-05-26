@@ -17,7 +17,7 @@ module ALU_Control(
 
 //I/O ports
 input      [6-1:0] funct_i;
-input      [4-1:0] ALUOp_i;
+input      [6-1:0] ALUOp_i;
 
 output     [4-1:0] ALUCtrl_o;
 //Internal Signals
