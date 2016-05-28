@@ -32,6 +32,15 @@ output           Branch;
 output           RegWrite;
 output           MemToReg;
 
+reg	 [6-1:0]	  AluOp;
+reg           	  AluSrc;
+reg              RegDst;
+reg              MemRead;
+reg              MemWrite;
+reg 				  Branch;
+reg              RegWrite;
+reg              MemToReg;
+
 // ADD, ADDI, SUB, AND, OR, SLT, SLTIU, SRA, SRAV, ORI, LW, SW, MUL.
 
 

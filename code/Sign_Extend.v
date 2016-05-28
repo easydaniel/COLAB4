@@ -16,7 +16,6 @@ module Sign_Extend(
 
 //I/O ports
 input   [16-1:0] data_i;
-input            zero_ext_i;
 output  [32-1:0] data_o;
 
 //Internal Signals

@@ -26,6 +26,7 @@ Internal signal
 /**** IF stage ****/
 wire [32-1:0] pc_i;
 wire [32-1:0] pc_o;
+wire [32-1:0] pc_sum;
 wire [32-1:0] instr_o;
 wire [32-1:0] IF_ID_pc_o;
 wire [32-1:0] IF_ID_instr_o;
@@ -171,70 +172,70 @@ Sign_Extend Sign_Extend(
       .data_o(sign_ext_o)
 		);
 
-Pipe_Reg #(.size(6)) ID_EX_AluOp(
+Pipe_Reg #(.size(6)) ID_EX_AluOp_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(AluOp),
       .data_o(ID_EX_AluOp)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_AluSrc(
+Pipe_Reg #(.size(1)) ID_EX_AluSrc_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(AluSrc),
       .data_o(ID_EX_AluSrc)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_RegDst(
+Pipe_Reg #(.size(1)) ID_EX_RegDst_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(RegDst),
       .data_o(ID_EX_RegDst)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_MemRead(
+Pipe_Reg #(.size(1)) ID_EX_MemRead_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(MemRead),
       .data_o(ID_EX_MemRead)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_MemWrite(
+Pipe_Reg #(.size(1)) ID_EX_MemWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(MemWrite),
       .data_o(ID_EX_MemWrite)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_Branch(
+Pipe_Reg #(.size(1)) ID_EX_Branch_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(Branch),
       .data_o(ID_EX_Branch)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_RegWrite(
+Pipe_Reg #(.size(1)) ID_EX_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(RegWrite),
       .data_o(ID_EX_RegWrite)
 		);
 
-Pipe_Reg #(.size(1)) ID_EX_MemToReg(
+Pipe_Reg #(.size(1)) ID_EX_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(MemToReg),
       .data_o(ID_EX_MemToReg)
 		);
 
-Pipe_Reg #(.size(32)) ID_EX_pc(
+Pipe_Reg #(.size(32)) ID_EX_pc_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(IF_ID_pc_o),
       .data_o(ID_EX_pc_o)
 		);
 
-Pipe_Reg #(.size(32)) ID_EX_rs(
+Pipe_Reg #(.size(32)) ID_EX_rs_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(RSdata_o),
@@ -242,35 +243,35 @@ Pipe_Reg #(.size(32)) ID_EX_rs(
 		);
 
 
-Pipe_Reg #(.size(32)) ID_EX_rs_addr(
+Pipe_Reg #(.size(5)) ID_EX_rs_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(IF_ID_instr_o[25:21]),
       .data_o(ID_EX_rs_addr_o)
 		);
 
-Pipe_Reg #(.size(32)) ID_EX_rt(
+Pipe_Reg #(.size(32)) ID_EX_rt_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(RTdata_o),
       .data_o(ID_EX_rt_o)
 		);
 
-Pipe_Reg #(.size(5)) ID_EX_rt_addr(
+Pipe_Reg #(.size(5)) ID_EX_rt_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(IF_ID_instr_o[20:16]),
       .data_o(ID_EX_rt_addr_o)
 		);
 
-Pipe_Reg #(.size(5)) ID_EX_rd_addr(
+Pipe_Reg #(.size(5)) ID_EX_rd_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(IF_ID_instr_o[15:11]),
       .data_o(ID_EX_rd_addr_o)
 		);
 
-Pipe_Reg #(.size(5)) ID_EX_sign_ext(
+Pipe_Reg #(.size(32)) ID_EX_sign_ext_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(sign_ext_o),
@@ -296,7 +297,7 @@ ALU ALU(
 ALU_Control ALU_Ctrl(
       .funct_i(ID_EX_sign_ext_o[5:0]),
       .ALUOp_i(ID_EX_AluOp),
-      .ALUCtrl_o(ctrl_i),
+      .ALUCtrl_o(ctrl_i)
 		);
 
 MUX_2to1 #(.size(32)) Mux1(
@@ -313,70 +314,70 @@ MUX_2to1 #(.size(5)) Mux2(
       .data_o(EX_dest_addr)
     );
 
-Pipe_Reg #(.size(1)) EX_MEM_Branch(
+Pipe_Reg #(.size(1)) EX_MEM_Branch_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_Branch),
       .data_o(EX_MEM_Branch)
 		);
 
-Pipe_Reg #(.size(1)) EX_MEM_MemRead(
+Pipe_Reg #(.size(1)) EX_MEM_MemRead_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_MemRead),
       .data_o(EX_MEM_MemRead)
 		);
 
-Pipe_Reg #(.size(1)) EX_MEM_MemWrite(
+Pipe_Reg #(.size(1)) EX_MEM_MemWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_MemWrite),
       .data_o(EX_MEM_MemWrite)
 		);
 
-Pipe_Reg #(.size(1)) EX_MEM_RegWrite(
+Pipe_Reg #(.size(1)) EX_MEM_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_RegWrite),
       .data_o(EX_MEM_RegWrite)
 		);
 
-Pipe_Reg #(.size(1)) EX_MEM_MemToReg(
+Pipe_Reg #(.size(1)) EX_MEM_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_MemToReg),
       .data_o(EX_MEM_MemToReg)
 		);
 
-Pipe_Reg #(.size(32)) EX_MEM_pc_shift(
+Pipe_Reg #(.size(32)) EX_MEM_pc_shift_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(add_shift_o),
       .data_o(EX_MEM_pc_shift_o)
 		);
 
-Pipe_Reg #(.size(1)) EX_MEM_zero(
+Pipe_Reg #(.size(1)) EX_MEM_zero_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(zero_o),
       .data_o(EX_MEM_zero_o)
 		);
 
-Pipe_Reg #(.size(5)) EX_MEM_dest_addr(
+Pipe_Reg #(.size(5)) EX_MEM_dest_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(EX_dest_addr),
       .data_o(EX_MEM_dest_addr_o)
 		);
 
-Pipe_Reg #(.size(32)) EX_MEM_result(
+Pipe_Reg #(.size(32)) EX_MEM_result_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(result_o),
       .data_o(EX_MEM_result_o)
 		);
 
-Pipe_Reg #(.size(32)) EX_MEM_write_data(
+Pipe_Reg #(.size(32)) EX_MEM_write_data_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(ID_EX_rt_o),
@@ -393,35 +394,35 @@ Data_Memory DM(
       .data_o(MEM_read_data_o)
     );
 
-Pipe_Reg #(.size(1)) MEM_WB_MemToReg(
+Pipe_Reg #(.size(1)) MEM_WB_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(EX_MEM_MemToReg),
       .data_o(MEM_WB_MemToReg)
 		);
 
-Pipe_Reg #(.size(2)) MEM_WB_RegWrite(
+Pipe_Reg #(.size(1)) MEM_WB_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(EX_MEM_RegWrite),
       .data_o(MEM_WB_RegWrite)
 		);
 
-Pipe_Reg #(.size(32)) MEM_WB_read_data(
+Pipe_Reg #(.size(32)) MEM_WB_read_data_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(MEM_read_data_o),
       .data_o(MEM_WB_read_data_o)
 		);
 
-Pipe_Reg #(.size(5)) MEM_WB_dest_addr(
+Pipe_Reg #(.size(5)) MEM_WB_dest_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(EX_MEM_dest_addr_o),
       .data_o(MEM_WB_dest_addr_o)
 		);
 
-Pipe_Reg #(.size(32)) MEM_WB_result(
+Pipe_Reg #(.size(32)) MEM_WB_result_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
       .data_i(EX_MEM_result_o),
@@ -430,8 +431,8 @@ Pipe_Reg #(.size(32)) MEM_WB_result(
 
 //Instantiate the components in WB stage
 MUX_2to1 #(.size(32)) Mux3(
-      .data0_i(MEM_WB_read_data_o),
-      .data1_i(MEM_WB_result_o),
+      .data0_i(MEM_WB_result_o),
+      .data1_i(MEM_WB_read_data_o),
       .select_i(MEM_WB_MemToReg),
       .data_o(MEM_write_data_o)
     );
