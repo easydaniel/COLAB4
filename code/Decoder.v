@@ -109,6 +109,26 @@ always @(*) begin
         RegWrite = 0;
         MemToReg = 0;
     end
+    6'b000100: begin // BEQ
+        AluOp = 6'b000110;
+        AluSrc = 0;
+        RegDst = 0;
+        MemRead = 0;
+        MemWrite = 0;
+        Branch = 1;
+        RegWrite = 0;
+        MemToReg = 0;
+    end
+    6'b000101: begin // BNE
+        AluOp = 6'b000111;
+        AluSrc = 0;
+        RegDst = 0;
+        MemRead = 0;
+        MemWrite = 0;
+        Branch = 1;
+        RegWrite = 0;
+        MemToReg = 0;
+    end
     default: begin
         AluOp = 6'b000000;
         AluSrc = 0;
