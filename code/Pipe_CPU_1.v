@@ -71,6 +71,10 @@ wire          ID_EX_MemWrite;
 wire          ID_EX_Branch;
 wire          ID_EX_RegWrite;
 wire          ID_EX_MemToReg;
+wire [2-1:0]  Forward_A;
+wire [2-1:0]  Forward_B;
+wire [32-1:0] Alu_Src_1;
+wire [32-1:0] Alu_Src_2;
 
 //control signal
 wire [6-1:0]  ID_EX_AluOp;
@@ -287,8 +291,8 @@ Adder Add_shift(
 		);
 
 ALU ALU(
-      .src1_i(ID_EX_rs_o),
-      .src2_i(src2_i),
+      .src1_i(Alu_Src_1),
+      .src2_i(Alu_Src_2),
       .ctrl_i(ctrl_i),
       .result_o(result_o),
       .zero_o(zero_o)
@@ -301,10 +305,10 @@ ALU_Control ALU_Ctrl(
 		);
 
 MUX_2to1 #(.size(32)) Mux1(
-      .data0_i(ID_EX_rt_o),
+      .data0_i(src2_i),
       .data1_i(ID_EX_sign_ext_o),
       .select_i(ID_EX_AluSrc),
-      .data_o(src2_i)
+      .data_o(Alu_Src_2)
     );
 
 MUX_2to1 #(.size(5)) Mux2(
@@ -312,6 +316,35 @@ MUX_2to1 #(.size(5)) Mux2(
       .data1_i(ID_EX_rd_addr_o),
       .select_i(ID_EX_RegDst),
       .data_o(EX_dest_addr)
+    );
+
+Mux_4to1 #(.size(32)) Mux4(
+      .data0_i(ID_EX_rs_o),
+      .data1_i(EX_MEM_result_o),
+      .data2_i(MEM_write_data_o),
+      .data3_i(32'b0),
+      .select_i(Forward_A),
+      .data_o(Alu_Src_1)
+    );
+
+Mux_4to1 #(.size(32)) Mux5(
+      .data0_i(ID_EX_rt_o),
+      .data1_i(EX_MEM_result_o),
+      .data2_i(MEM_write_data_o),
+      .data3_i(32'b0),
+      .select_i(Forward_B),
+      .data_o(src2_i)
+    );
+
+ForwardUnit Forwarding(
+      .ID_EX_RS_addr_i(ID_EX_rs_addr_o),
+      .ID_EX_RT_addr_i(ID_EX_rt_addr_o),
+      .EX_MEM_RD_addr_i(EX_MEM_dest_addr_o),
+      .EX_MEM_RegWrite_i(EX_MEM_RegWrite),
+      .MEM_WB_RD_addr_i(MEM_WB_dest_addr_o),
+      .MEM_WB_RegWrite_i(MEM_WB_RegWrite),
+      .Forward_A(Forward_A),
+      .Forward_B(Forward_B)
     );
 
 Pipe_Reg #(.size(1)) EX_MEM_Branch_Pipe(
@@ -380,7 +413,7 @@ Pipe_Reg #(.size(32)) EX_MEM_result_Pipe(
 Pipe_Reg #(.size(32)) EX_MEM_write_data_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
-      .data_i(ID_EX_rt_o),
+      .data_i(src2_i),
       .data_o(EX_MEM_write_data_o)
 		);
 
