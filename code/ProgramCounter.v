@@ -12,6 +12,7 @@
 module ProgramCounter(
   clk_i,
 	rst_i,
+	PC_Write_i,
 	pc_i,
 	pc_o
 	);
@@ -19,6 +20,7 @@ module ProgramCounter(
 //I/O ports
 input           clk_i;
 input	          rst_i;
+input				 PC_Write_i;
 input  [32-1:0] pc_i;
 output [32-1:0] pc_o;
 
@@ -32,8 +34,12 @@ reg    [32-1:0] pc_o;
 always @(posedge clk_i) begin
   if(~rst_i)
 	    pc_o <= 0;
-  else
-	    pc_o <= pc_i;
+  else begin
+	  if (PC_Write_i)
+			pc_o <= pc_i;
+	  else
+			pc_o <= (pc_i - 4);
+  end
 end
 
 endmodule

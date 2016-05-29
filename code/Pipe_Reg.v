@@ -10,11 +10,11 @@
 //--------------------------------------------------------------------------------
 module Pipe_Reg(
     clk_i,
-  	rst_i,
+	 rst_i,
     flush_i,
     write_i,
-  	data_i,
-  	data_o
+  	 data_i,
+  	 data_o
 	);
 
 parameter size = 0;
@@ -34,6 +34,6 @@ always @(posedge clk_i) begin
             data_o <= data_i;
         else
             data_o <= data_o;
+	 end
 end
-
 endmodule

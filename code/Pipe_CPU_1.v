@@ -122,6 +122,7 @@ MUX_2to1 #(.size(32)) Mux0(
 ProgramCounter PC(
       .clk_i(clk_i),
       .rst_i(rst_i),
+		  .PC_Write_i(PC_Write),
       .pc_i(pc_i),
       .pc_o(pc_o)
     );
