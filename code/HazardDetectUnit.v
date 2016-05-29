@@ -45,7 +45,7 @@ reg            	 EX_Flush;
 always @(*) begin
 	case(PC_Select)
 		 1'b1: begin
-			  PC_Write <= 1'b0;
+			  PC_Write <= 1'b1;
 			  IF_Write <= 1'b0;
 			  IF_Flush <= 1'b1;
 			  ID_Flush <= 1'b1;

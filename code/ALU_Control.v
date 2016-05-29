@@ -38,7 +38,7 @@ always @ (*) begin
             6'b000011: ALUCtrl_o = 4'b1000; // SRA
             6'b000111: ALUCtrl_o = 4'b1001; // SRAV
             6'b011000: ALUCtrl_o = 4'b1011; // MUL
-            default:   ALUCtrl_o = 4'bxxxx;
+            default:   ALUCtrl_o = 4'b0000;
         endcase
     end
     6'b000001: ALUCtrl_o = 4'b0010; // ADDI
@@ -48,7 +48,7 @@ always @ (*) begin
     6'b000101: ALUCtrl_o = 4'b0010; // SW
     6'b000110: ALUCtrl_o = 4'b0110; // BEQ
     6'b000111: ALUCtrl_o = 4'b1100; // BNE
-    default: ALUCtrl_o = 4'bxxxx;
+    default: ALUCtrl_o = 4'b0000;
   endcase
 end
 

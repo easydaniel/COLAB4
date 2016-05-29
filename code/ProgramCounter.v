@@ -38,7 +38,7 @@ always @(posedge clk_i) begin
 	  if (PC_Write_i)
 			pc_o <= pc_i;
 	  else
-			pc_o <= (pc_i - 4);
+			pc_o <= pc_o;
   end
 end
 

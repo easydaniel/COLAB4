@@ -45,7 +45,7 @@ end
 //Print result to "CO_P4_Result.dat"
 always@(posedge CLK) begin
     count = count + 1;
-	if( count == 30 ) begin 
+	//if( count == 30 ) begin 
 	//print result to transcript 
 	$display("Register===========================================================\n");
 	$display("r0=%d, r1=%d, r2=%d, r3=%d, r4=%d, r5=%d, r6=%d, r7=%d\n",
@@ -77,8 +77,8 @@ always@(posedge CLK) begin
 	cpu.DM.memory[28], cpu.DM.memory[29], cpu.DM.memory[30], cpu.DM.memory[31]
 	);
 	//$display("\nPC=%d\n",cpu.PC.pc_i);
-	end
-	else ;
+	//end
+	//else ;
 end
   
 endmodule
