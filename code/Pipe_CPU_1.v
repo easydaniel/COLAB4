@@ -100,6 +100,13 @@ wire          EX_MEM_Branch;
 //control signal
 wire          MEM_WB_MemToReg;
 
+// Hazard Unit signal
+wire PC_Write;
+wire IF_Write;
+wire IF_Flush;
+wire ID_Flush;
+wire EX_Flush;
+
 /****************************************
 Instnatiate modules
 ****************************************/
@@ -108,7 +115,7 @@ Instnatiate modules
 MUX_2to1 #(.size(32)) Mux0(
       .data0_i(pc_sum),
       .data1_i(EX_MEM_pc_shift_o),
-      .select_i(EX_MEM_Branch & zero_o),
+      .select_i(EX_MEM_Branch & EX_MEM_zero_o),  // zero should use pipelined?
       .data_o(pc_i)
     );
 
@@ -134,6 +141,8 @@ Adder Add_pc(
 Pipe_Reg #(.size(32)) IF_ID_pc(       //N is the total length of input/output
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(IF_Flush),
+      .write_i(IF_Write),
       .data_i(pc_sum),
       .data_o(IF_ID_pc_o)
 		);
@@ -141,6 +150,8 @@ Pipe_Reg #(.size(32)) IF_ID_pc(       //N is the total length of input/output
 Pipe_Reg #(.size(32)) IF_ID_instr(       //N is the total length of input/output
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(IF_Flush),
+      .write_i(IF_Write),
       .data_i(instr_o),
       .data_o(IF_ID_instr_o)
 		);
@@ -179,6 +190,8 @@ Sign_Extend Sign_Extend(
 Pipe_Reg #(.size(6)) ID_EX_AluOp_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(AluOp),
       .data_o(ID_EX_AluOp)
 		);
@@ -186,6 +199,8 @@ Pipe_Reg #(.size(6)) ID_EX_AluOp_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_AluSrc_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(AluSrc),
       .data_o(ID_EX_AluSrc)
 		);
@@ -193,6 +208,8 @@ Pipe_Reg #(.size(1)) ID_EX_AluSrc_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_RegDst_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(RegDst),
       .data_o(ID_EX_RegDst)
 		);
@@ -200,6 +217,8 @@ Pipe_Reg #(.size(1)) ID_EX_RegDst_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_MemRead_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(MemRead),
       .data_o(ID_EX_MemRead)
 		);
@@ -207,6 +226,8 @@ Pipe_Reg #(.size(1)) ID_EX_MemRead_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_MemWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(MemWrite),
       .data_o(ID_EX_MemWrite)
 		);
@@ -214,6 +235,8 @@ Pipe_Reg #(.size(1)) ID_EX_MemWrite_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_Branch_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(Branch),
       .data_o(ID_EX_Branch)
 		);
@@ -221,6 +244,8 @@ Pipe_Reg #(.size(1)) ID_EX_Branch_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(RegWrite),
       .data_o(ID_EX_RegWrite)
 		);
@@ -228,6 +253,8 @@ Pipe_Reg #(.size(1)) ID_EX_RegWrite_Pipe(
 Pipe_Reg #(.size(1)) ID_EX_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(MemToReg),
       .data_o(ID_EX_MemToReg)
 		);
@@ -235,6 +262,8 @@ Pipe_Reg #(.size(1)) ID_EX_MemToReg_Pipe(
 Pipe_Reg #(.size(32)) ID_EX_pc_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(IF_ID_pc_o),
       .data_o(ID_EX_pc_o)
 		);
@@ -242,6 +271,8 @@ Pipe_Reg #(.size(32)) ID_EX_pc_Pipe(
 Pipe_Reg #(.size(32)) ID_EX_rs_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(RSdata_o),
       .data_o(ID_EX_rs_o)
 		);
@@ -250,6 +281,8 @@ Pipe_Reg #(.size(32)) ID_EX_rs_Pipe(
 Pipe_Reg #(.size(5)) ID_EX_rs_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(IF_ID_instr_o[25:21]),
       .data_o(ID_EX_rs_addr_o)
 		);
@@ -257,6 +290,8 @@ Pipe_Reg #(.size(5)) ID_EX_rs_addr_Pipe(
 Pipe_Reg #(.size(32)) ID_EX_rt_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(RTdata_o),
       .data_o(ID_EX_rt_o)
 		);
@@ -264,6 +299,8 @@ Pipe_Reg #(.size(32)) ID_EX_rt_Pipe(
 Pipe_Reg #(.size(5)) ID_EX_rt_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(IF_ID_instr_o[20:16]),
       .data_o(ID_EX_rt_addr_o)
 		);
@@ -271,6 +308,8 @@ Pipe_Reg #(.size(5)) ID_EX_rt_addr_Pipe(
 Pipe_Reg #(.size(5)) ID_EX_rd_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(IF_ID_instr_o[15:11]),
       .data_o(ID_EX_rd_addr_o)
 		);
@@ -278,6 +317,8 @@ Pipe_Reg #(.size(5)) ID_EX_rd_addr_Pipe(
 Pipe_Reg #(.size(32)) ID_EX_sign_ext_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(ID_Flush),
+      .write_i(1'b1),
       .data_i(sign_ext_o),
       .data_o(ID_EX_sign_ext_o)
 		);
@@ -347,9 +388,24 @@ ForwardUnit Forwarding(
       .Forward_B(Forward_B)
     );
 
+HazardDetectUnit Hazard(
+      .PC_Select(EX_MEM_Branch & EX_MEM_zero_o),
+      .IF_ID_RS_addr_i(IF_ID_instr_o[25:21]),
+      .IF_ID_RT_addr_i(IF_ID_instr_o[20:16]),
+      .ID_EX_RT_addr_i(ID_EX_rt_addr_o),
+      .ID_EX_MemRead_i(ID_EX_MemRead),
+      .PC_Write(PC_Write),
+      .IF_Write(IF_Write),
+      .IF_Flush(IF_Flush),
+      .ID_Flush(ID_Flush),
+      .EX_Flush(EX_Flush)
+);
+
 Pipe_Reg #(.size(1)) EX_MEM_Branch_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(ID_EX_Branch),
       .data_o(EX_MEM_Branch)
 		);
@@ -357,6 +413,8 @@ Pipe_Reg #(.size(1)) EX_MEM_Branch_Pipe(
 Pipe_Reg #(.size(1)) EX_MEM_MemRead_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(ID_EX_MemRead),
       .data_o(EX_MEM_MemRead)
 		);
@@ -364,6 +422,8 @@ Pipe_Reg #(.size(1)) EX_MEM_MemRead_Pipe(
 Pipe_Reg #(.size(1)) EX_MEM_MemWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(ID_EX_MemWrite),
       .data_o(EX_MEM_MemWrite)
 		);
@@ -371,6 +431,8 @@ Pipe_Reg #(.size(1)) EX_MEM_MemWrite_Pipe(
 Pipe_Reg #(.size(1)) EX_MEM_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(ID_EX_RegWrite),
       .data_o(EX_MEM_RegWrite)
 		);
@@ -378,6 +440,8 @@ Pipe_Reg #(.size(1)) EX_MEM_RegWrite_Pipe(
 Pipe_Reg #(.size(1)) EX_MEM_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(ID_EX_MemToReg),
       .data_o(EX_MEM_MemToReg)
 		);
@@ -385,6 +449,8 @@ Pipe_Reg #(.size(1)) EX_MEM_MemToReg_Pipe(
 Pipe_Reg #(.size(32)) EX_MEM_pc_shift_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(add_shift_o),
       .data_o(EX_MEM_pc_shift_o)
 		);
@@ -392,6 +458,8 @@ Pipe_Reg #(.size(32)) EX_MEM_pc_shift_Pipe(
 Pipe_Reg #(.size(1)) EX_MEM_zero_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(zero_o),
       .data_o(EX_MEM_zero_o)
 		);
@@ -399,6 +467,8 @@ Pipe_Reg #(.size(1)) EX_MEM_zero_Pipe(
 Pipe_Reg #(.size(5)) EX_MEM_dest_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(EX_dest_addr),
       .data_o(EX_MEM_dest_addr_o)
 		);
@@ -406,6 +476,8 @@ Pipe_Reg #(.size(5)) EX_MEM_dest_addr_Pipe(
 Pipe_Reg #(.size(32)) EX_MEM_result_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(result_o),
       .data_o(EX_MEM_result_o)
 		);
@@ -413,6 +485,8 @@ Pipe_Reg #(.size(32)) EX_MEM_result_Pipe(
 Pipe_Reg #(.size(32)) EX_MEM_write_data_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(EX_Flush),
+      .write_i(1'b1),
       .data_i(src2_i),
       .data_o(EX_MEM_write_data_o)
 		);
@@ -430,6 +504,8 @@ Data_Memory DM(
 Pipe_Reg #(.size(1)) MEM_WB_MemToReg_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(1'b0),
+      .write_i(1'b1),
       .data_i(EX_MEM_MemToReg),
       .data_o(MEM_WB_MemToReg)
 		);
@@ -437,6 +513,8 @@ Pipe_Reg #(.size(1)) MEM_WB_MemToReg_Pipe(
 Pipe_Reg #(.size(1)) MEM_WB_RegWrite_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(1'b0),
+      .write_i(1'b1),
       .data_i(EX_MEM_RegWrite),
       .data_o(MEM_WB_RegWrite)
 		);
@@ -444,6 +522,8 @@ Pipe_Reg #(.size(1)) MEM_WB_RegWrite_Pipe(
 Pipe_Reg #(.size(32)) MEM_WB_read_data_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(1'b0),
+      .write_i(1'b1),
       .data_i(MEM_read_data_o),
       .data_o(MEM_WB_read_data_o)
 		);
@@ -451,6 +531,8 @@ Pipe_Reg #(.size(32)) MEM_WB_read_data_Pipe(
 Pipe_Reg #(.size(5)) MEM_WB_dest_addr_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(1'b0),
+      .write_i(1'b1),
       .data_i(EX_MEM_dest_addr_o),
       .data_o(MEM_WB_dest_addr_o)
 		);
@@ -458,6 +540,8 @@ Pipe_Reg #(.size(5)) MEM_WB_dest_addr_Pipe(
 Pipe_Reg #(.size(32)) MEM_WB_result_Pipe(
       .clk_i(clk_i),
       .rst_i(rst_i),
+      .flush_i(1'b0),
+      .write_i(1'b1),
       .data_i(EX_MEM_result_o),
       .data_o(MEM_WB_result_o)
 		);
