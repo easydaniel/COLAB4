@@ -1,0 +1,45 @@
+Running: C:\Xilinx\14.7\ISE_DS\ISE\bin\nt64\unwrapped\fuse.exe -intstyle ise -incremental -lib unisims_ver -lib unimacro_ver -lib xilinxcorelib_ver -o C:/Users/easy/Documents/Xilinx/COLAB5/TestBench_isim_beh.exe -prj C:/Users/easy/Documents/Xilinx/COLAB5/TestBench_beh.prj work.TestBench work.glbl 
+ISim P.20131013 (signature 0x7708f090)
+Number of CPUs detected in this system: 4
+Turning on mult-threading, number of parallel sub-compilation jobs: 8 
+Determining compilation order of HDL files
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Sign_Extend.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Shift_Left_Two_32.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Reg_File.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/ProgramCounter.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/MUX_3to1.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/MUX_2to1.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Instr_Memory.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Decoder.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Data_Memory.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/ALU_Ctrl.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/ALU.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Adder.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/Simple_Single_CPU.v" into library work
+Analyzing Verilog file "C:/Users/easy/Documents/Xilinx/COLAB5/TestBench.v" into library work
+Analyzing Verilog file "C:/Xilinx/14.7/ISE_DS/ISE//verilog/src/glbl.v" into library work
+Starting static elaboration
+Completed static elaboration
+Compiling module ProgramCounter
+Compiling module Adder
+Compiling module Instruction_Memory
+Compiling module MUX_4to1(size=5)
+Compiling module MUX_2to1(size=32)
+Compiling module Reg_File
+Compiling module Decoder
+Compiling module ALU_Ctrl
+Compiling module Sign_Extend
+Compiling module ALU
+Compiling module Shift_Left_Two_32
+Compiling module MUX_4to1(size=32)
+Compiling module Data_Memory
+Compiling module Simple_Single_CPU
+Compiling module TestBench
+Compiling module glbl
+Time Resolution for simulation is 1ps.
+Waiting for 1 sub-compilation(s) to finish...
+WARNING:Simulator - Unable to copy libPortabilityNOSH.dll to the simulation executable directory: boost::filesystem::copy_file: 系統找不到指定的路徑。, "isim\TestBench_isim_beh.exe.sim\libPortability.dll".
+Compiled 16 Verilog Units
+Built simulation executable C:/Users/easy/Documents/Xilinx/COLAB5/TestBench_isim_beh.exe
+Fuse Memory Usage: 28668 KB
+Fuse CPU Usage: 546 ms
