@@ -7,7 +7,7 @@ using namespace std;
 
 struct cache_content{
 	bool v;
-	unsigned int count;
+	unsigned int ts;
 	unsigned int tag;
 };
 
@@ -25,14 +25,14 @@ void simulate(int cache_size, int block_size, int select, int way){
 	unsigned int count = 0, miss = 0;
 
 	int offset_bit = (int) log2(block_size);
-	int index_bit = (int) log2(cache_size/way);
-	int line= cache_size>>(offset_bit);
-	int setSZ = (line / way);
+	int index_size = (cache_size / block_size) / way;
+	int index_bit = (int) log2(index_size);
 
-	vector<vector<cache_content>> cache(way, vector<cache_content>(setSZ));
-	for (size_t i = 0; i < way; i++) {
-		for (size_t j = 0; j < setSZ; j++) {
+	vector<vector<cache_content>> cache(index_size, vector<cache_content>(way));
+	for (size_t i = 0; i < index_size; i++) {
+		for (size_t j = 0; j < way; j++) {
 			cache[i][j].v = false;
+			cache[i][j].ts = 0;
 		}
 	}
 
@@ -40,14 +40,14 @@ void simulate(int cache_size, int block_size, int select, int way){
 	while(fscanf(fp,"%x",&x)!=EOF){
 
 		// cout<<hex<<x<<" ";
-		index=(x>>offset_bit)&(way-1);
-		tag=x>>(index_bit+offset_bit);
+		index = (x >> offset_bit) & (index_size - 1);
+		tag = x >> (index_bit + offset_bit);
 		bool hit = false;
 		for (size_t i = 0; i < cache[index].size(); i++) {
 			if (cache[index][i].v && tag == cache[index][i].tag) {
 				// hit
 				hit = true;
-				cache[index][i].count++;
+				cache[index][i].ts = count;
 				break;
 			}
 		}
@@ -60,16 +60,16 @@ void simulate(int cache_size, int block_size, int select, int way){
 					full = false;
 					cache[index][i].v = true;
 					cache[index][i].tag = tag;
-					cache[index][i].count = 1;
+					cache[index][i].ts = count;
 					break;
 				}
-				if (cache[index][i].count < cache[index][LRU].count) {
+				if (cache[index][i].ts < cache[index][LRU].ts) {
 					LRU = i;
 				}
 			}
 			if (full) {
 				cache[index][LRU].tag = tag;
-				cache[index][LRU].count = 1;
+				cache[index][LRU].ts = count;
 			}
 		}
 		count++;
@@ -87,12 +87,12 @@ int main(){
 		puts("  LU");
 		for (size_t j = 1; j <= 8; j <<= 1) {
 			printf("    %zu-way\n", j);
-			simulate((1 << i) * K, (1 << 6), 0, j);
+			simulate((1 << i) * K, (1 << 6), 1, j);
 		}
 		puts("  RADIX");
 		for (size_t j = 1; j <= 8; j <<= 1) {
 			printf("    %zu-way\n", j);
-			simulate((1 << i) * K, (1 << 6), 1, j);
+			simulate((1 << i) * K, (1 << 6), 0, j);
 		}
 	}
 }
